@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="pt-BR">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Parcial Dia 30 · Outubro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: painel de leitura rápida — resumo do grupo, tabela de lojas filtrável, faixa por supervisor */
+:root{
+  --bg:#f3f2ec; --surface:#fbfaf6; --line:#dcd9cc; --fg:#17251c; --muted:#5d6a60;
+  --green:#1f5a3a; --green-deep:#173323; --gold:#d9a02b;
+  --ok:#1f7a45; --ok-bg:#dcefe2; --warn:#9a6a08; --warn-bg:#f6e8c6; --bad:#b03a2e; --bad-bg:#f6dcd8;
+  --track:#e6e3d8;
+  --display:"Oswald","Arial Narrow",Impact,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111a14; --surface:#18241c; --line:#2c3b31; --fg:#e8ede6; --muted:#9aa89d;
+  --green:#5fb685; --green-deep:#0c140f; --gold:#e8b44a;
+  --ok:#6fcf93; --ok-bg:#1d3a28; --warn:#e8b44a; --warn-bg:#3a2f15; --bad:#f08a7e; --bad-bg:#3d201c;
+  --track:#26342b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111a14; --surface:#18241c; --line:#2c3b31; --fg:#e8ede6; --muted:#9aa89d;
+  --green:#5fb685; --green-deep:#0c140f; --gold:#e8b44a;
+  --ok:#6fcf93; --ok-bg:#1d3a28; --warn:#e8b44a; --warn-bg:#3a2f15; --bad:#f08a7e; --bad-bg:#3d201c;
+  --track:#26342b; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px}
+.wrap{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+.num{font-variant-numeric:tabular-nums}
+h1,h2{font-family:var(--display);font-weight:600;text-transform:uppercase;letter-spacing:.01em;margin:0;text-wrap:balance}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.05;color:var(--green)}
+h2{font-size:17px;letter-spacing:.06em;color:var(--green)}
+.sub{color:var(--muted);margin:6px 0 0}
+.cut{display:inline-flex;align-items:center;gap:8px;margin-top:12px;font-size:13px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px 12px}
+.cut b{font-weight:600}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--gold)}
+
+/* hero */
+.hero{background:var(--green-deep);color:#eef3ec;border-radius:14px;padding:24px;display:grid;grid-template-columns:1.3fr 1fr;gap:28px}
+.hero .lbl{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#a9bfae}
+.big{font-family:var(--display);font-size:clamp(38px,7vw,58px);line-height:1;margin:6px 0 4px}
+.big small{font-size:.42em;color:#a9bfae;font-family:var(--body);font-weight:500}
+.meter{position:relative;height:14px;background:#2b4535;border-radius:7px;margin:18px 0 8px;overflow:visible}
+.meter .fill{position:absolute;inset:0 auto 0 0;background:var(--gold);border-radius:7px}
+.meter .mark{position:absolute;top:-6px;bottom:-6px;width:2px;background:#fff}
+.meter-legend{display:flex;justify-content:space-between;font-size:12px;color:#a9bfae;gap:12px;flex-wrap:wrap}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:18px 20px;align-content:start}
+.fact .v{font-family:var(--display);font-size:26px;line-height:1.1}
+.fact .d{font-size:12.5px;color:#a9bfae}
+.hero p.read{grid-column:1/-1;margin:0;font-size:14px;color:#d7e2d8;border-top:1px solid #2b4535;padding-top:14px;max-width:80ch}
+
+/* supervisors */
+.sups{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.sup{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;cursor:pointer;text-align:left;font:inherit;color:inherit}
+.sup:hover{border-color:var(--green)}
+.sup:focus-visible,.chip:focus-visible,th button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.sup[aria-pressed="true"]{border-color:var(--green);box-shadow:inset 0 0 0 1px var(--green)}
+.sup .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.sup .name{font-weight:600}
+.sup .pctv{font-family:var(--display);font-size:22px}
+.sup .row{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);gap:8px}
+.bar{position:relative;height:8px;background:var(--track);border-radius:4px}
+.bar .fill{position:absolute;inset:0 auto 0 0;border-radius:4px;background:var(--green)}
+.bar .mark{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--fg);opacity:.7}
+
+/* table */
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:4px 12px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:var(--surface)}
+.tablebox{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+table{width:100%;border-collapse:collapse;min-width:820px}
+th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--surface);position:sticky;top:0}
+th button{all:unset;cursor:pointer}
+th button[data-dir]::after{content:" ↓";}
+th button[data-dir="asc"]::after{content:" ↑"}
+tbody tr:last-child td{border-bottom:0}
+tr.grp td{background:var(--bg);text-align:left;padding:10px 12px}
+td .loja{font-weight:500}
+td .sp{display:block;font-size:12px;color:var(--muted)}
+td.progress{width:200px}
+.pbar{display:flex;align-items:center;gap:10px}
+.pbar .bar{flex:1;min-width:90px}
+.pbar span{width:44px;text-align:right}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 10px;border-radius:999px}
+.ok{background:var(--ok-bg);color:var(--ok)} .warn{background:var(--warn-bg);color:var(--warn)} .bad{background:var(--bad-bg);color:var(--bad)} .na{background:var(--track);color:var(--muted)}
+.up{color:var(--ok)} .down{color:var(--bad)}
+.fill.ok{background:var(--ok)} .fill.warn{background:var(--gold)} .fill.bad{background:var(--bad)}
+.notes{font-size:13.5px;color:var(--muted);max-width:85ch;display:flex;flex-direction:column;gap:6px}
+.notes b{color:var(--fg);font-weight:600}
+@media (max-width:760px){.hero{grid-template-columns:1fr}.facts{grid-template-columns:1fr 1fr}}
+@media (prefers-reduced-motion:no-preference){.fill{transition:width .5s ease}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Dia 30 · Parcial de venda</h1>
+    <p class="sub">Sexta-feira, 30 de outubro de 2026 · meta do GFF por loja contra a venda do Atlas, balcão + delivery</p>
+    <span class="cut"><span class="dot"></span>Venda até <b>~14h40</b> · Atlas coletado às 14h45</span>
+  </header>
+
+  <section class="hero" aria-label="Resumo do grupo">
+    <div>
+      <div class="lbl">Vendido até agora · 56 lojas com meta</div>
+      <div class="big num" id="hTot"></div>
+      <div class="num" id="hMeta" style="color:#a9bfae"></div>
+      <div class="meter" aria-hidden="true"><div class="fill" id="hFill"></div><div class="mark" id="hMark"></div></div>
+      <div class="meter-legend"><span id="hFeito"></span><span id="hEsp"></span></div>
+    </div>
+    <div class="facts">
+      <div class="fact"><div class="v num" id="fProj"></div><div class="d">projeção de fechamento no ritmo atual</div></div>
+      <div class="fact"><div class="v num" id="fRitmo"></div><div class="d">lojas no ritmo da meta</div></div>
+      <div class="fact"><div class="v num" id="fSet"></div><div class="d">contra 30/09 no mesmo horário</div></div>
+      <div class="fact"><div class="v num" id="fSex"></div><div class="d">contra sexta 23/10 no mesmo horário</div></div>
+    </div>
+    <p class="read" id="hRead"></p>
+  </section>
+
+
+  <section style="display:flex;flex-direction:column;gap:12px">
+    <div class="toolbar">
+      <h2>Lojas</h2>
+      <div class="chips" id="stChips"></div>
+    </div>
+    <div class="tablebox">
+      <table>
+        <thead><tr>
+          <th><button data-k="nome">Loja</button></th>
+          <th><button data-k="venda">Vendido</button></th>
+          <th><button data-k="meta">Meta</button></th>
+          <th><button data-k="feito">% da meta</button></th>
+          <th><button data-k="proj">Projeção</button></th>
+          <th><button data-k="ratio" data-dir="desc">Status</button></th>
+          <th><button data-k="vsSet">vs 30/09</button></th>
+          <th><button data-k="deliv">Delivery</button></th>
+        </tr></thead>
+        <tbody id="tb"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:12px">
+    <h2>Por supervisor</h2>
+    <p class="sub" style="margin:0">Clique num supervisor para filtrar a tabela de lojas acima.</p>
+    <div class="sups" id="sups"></div>
+  </section>
+
+  <section class="notes">
+    <h2>Como ler</h2>
+    <div><b>Esperado no horário</b> (o traço em cada barra): a parte do dia que cada loja costuma ter vendido até 14h30 em dia 30, pela curva de 30/08 e 30/09. A projeção divide o vendido por essa parte. É uma estimativa: o 30/08 caiu num domingo e o 30/09 numa quarta, e a sexta à noite tende a vender mais, então a projeção pode estar um pouco abaixo do real.</div>
+    <div><b>Status:</b> no ritmo = projeção ≥ meta; perto = 85% a 99%; abaixo = menos de 85%.</div>
+    <div><b>vs 30/09 e vs 23/10:</b> venda até o mesmo horário naqueles dias.</div>
+    <div><b>Catalão</b> do PDF da Amanda foi lido como a loja Caiçaras do Atlas. <b>Serra</b> não tem meta e fica fora dos totais. <b>Top Shopping</b> usa a curva da sexta 23/10, porque não tem dia 30 anterior.</div>
+    <div><b>Delivery R$ 0</b> até agora em 12 lojas: vale confirmar se o iFood e o 99 estão abertos nelas.</div>
+    <div>A apuração oficial segue a regra do PDF: da abertura de sexta até as 5h de sábado. Este é um parcial.</div>
+  </section>
+</div>
+
+<script>
+const LOJAS = [{"sup": "Vinícius Bomtempo", "nome": "Centro (Ipatinga)", "meta": 16100, "venda": 3492.9, "pct": 0.48161, "ate23": 2685.33, "ate_set": 4651.78, "deliv": 0.0, "ped": 88, "ultima": ""}, {"sup": "Vinícius Bomtempo", "nome": "Cidade Nobre (Ipatinga)", "meta": 25700, "venda": 3832.29, "pct": 0.2714, "ate23": 2266.45, "ate_set": 6478.99, "deliv": 103.99, "ped": 85, "ultima": ""}, {"sup": "Vinícius Bomtempo", "nome": "Laranjeiras (Serra/ES)", "meta": 24600, "venda": 5096.0, "pct": 0.29021, "ate23": 4305.69, "ate_set": 7599.45, "deliv": 61.5, "ped": 110, "ultima": ""}, {"sup": "Vinícius Bomtempo", "nome": "Shopping do Vale (Ipatinga)", "meta": 17100, "venda": 4556.38, "pct": 0.30083, "ate23": 1289.03, "ate_set": 4472.46, "deliv": 828.48, "ped": 116, "ultima": ""}, {"sup": "Vinícius Bomtempo", "nome": "Timóteo", "meta": 11800, "venda": 1836.8, "pct": 0.25719, "ate23": 1484.66, "ate_set": 3378.75, "deliv": 0.0, "ped": 40, "ultima": ""}, {"sup": "Sérgio Nascimento", "nome": "Abílio Machado", "meta": 22200, "venda": 3701.0, "pct": 0.1664, "ate23": 1835.32, "ate_set": 3632.55, "deliv": 0.0, "ped": 93, "ultima": "14:29"}, {"sup": "Sérgio Nascimento", "nome": "Barreiro", "meta": 16600, "venda": 4697.7, "pct": 0.31845, "ate23": 1459.46, "ate_set": 4936.07, "deliv": 840.9, "ped": 123, "ultima": "14:38"}, {"sup": "Sérgio Nascimento", "nome": "Betânia", "meta": 25700, "venda": 3289.2, "pct": 0.2082, "ate23": 1534.72, "ate_set": 5676.67, "deliv": 102.0, "ped": 82, "ultima": "14:33"}, {"sup": "Sérgio Nascimento", "nome": "Contorno", "meta": 11400, "venda": 2859.8, "pct": 0.39207, "ate23": 1666.09, "ate_set": 4295.6, "deliv": 107.5, "ped": 80, "ultima": ""}, {"sup": "Sérgio Nascimento", "nome": "Coração Eucarístico", "meta": 17900, "venda": 4031.2, "pct": 0.30008, "ate23": 2312.54, "ate_set": 4989.25, "deliv": 1599.4, "ped": 109, "ultima": ""}, {"sup": "Sérgio Nascimento", "nome": "Francisco Sales", "meta": 15000, "venda": 3948.0, "pct": 0.39746, "ate23": 2577.22, "ate_set": 5028.15, "deliv": 20.0, "ped": 100, "ultima": ""}, {"sup": "Sérgio Nascimento", "nome": "Hot Point", "meta": 12400, "venda": 3191.9, "pct": 0.22837, "ate23": null, "ate_set": 3117.35, "deliv": 992.5, "ped": 83, "ultima": ""}, {"sup": "Sérgio Nascimento", "nome": "Lifecenter", "meta": 10600, "venda": 4234.1, "pct": 0.37409, "ate23": 1800.05, "ate_set": 3225.95, "deliv": 865.5, "ped": 120, "ultima": ""}, {"sup": "Sérgio Nascimento", "nome": "PTB (Betim)", "meta": 20600, "venda": 4206.7, "pct": 0.21913, "ate23": 714.04, "ate_set": 3607.76, "deliv": 2052.3, "ped": 107, "ultima": ""}, {"sup": "Sérgio Nascimento", "nome": "Padre Eustáquio", "meta": 19800, "venda": 4542.1, "pct": 0.26224, "ate23": 2265.55, "ate_set": 3944.47, "deliv": 1693.0, "ped": 109, "ultima": ""}, {"sup": "Sérgio Nascimento", "nome": "Reserva Mall", "meta": 9700, "venda": 2267.7, "pct": 0.36882, "ate23": 1000.0, "ate_set": 2561.45, "deliv": 539.0, "ped": 59, "ultima": ""}, {"sup": "Sérgio Nascimento", "nome": "Ressaca (Contagem)", "meta": 24500, "venda": 5444.1, "pct": 0.33355, "ate23": 1325.22, "ate_set": 4671.4, "deliv": 1753.3, "ped": 113, "ultima": ""}, {"sup": "Sérgio Nascimento", "nome": "Silva Lobo", "meta": 13400, "venda": 3662.0, "pct": 0.2673, "ate23": 1038.42, "ate_set": 3842.72, "deliv": 0.0, "ped": 100, "ultima": ""}, {"sup": "Raika Fonseca", "nome": "Afonso Pena", "meta": 16700, "venda": 2708.2, "pct": 0.27243, "ate23": 1545.55, "ate_set": 4853.55, "deliv": 0.0, "ped": 65, "ultima": "14:39"}, {"sup": "Raika Fonseca", "nome": "Anchieta", "meta": 8100, "venda": 1541.2, "pct": 0.34802, "ate23": 1250.87, "ate_set": 2656.7, "deliv": 400.0, "ped": 41, "ultima": "14:36"}, {"sup": "Raika Fonseca", "nome": "Andradas", "meta": 11300, "venda": 3512.8, "pct": 0.49348, "ate23": 460.91, "ate_set": 4310.05, "deliv": 277.0, "ped": 84, "ultima": "14:40"}, {"sup": "Raika Fonseca", "nome": "Floresta", "meta": 14800, "venda": 3775.6, "pct": 0.3069, "ate23": 1623.3, "ate_set": 4749.67, "deliv": 933.0, "ped": 97, "ultima": ""}, {"sup": "Raika Fonseca", "nome": "Nazaré", "meta": 20000, "venda": 4008.33, "pct": 0.10856, "ate23": 618.88, "ate_set": 1753.82, "deliv": 2082.4, "ped": 96, "ultima": ""}, {"sup": "Raika Fonseca", "nome": "Niquelina", "meta": 10800, "venda": 2034.9, "pct": 0.27727, "ate23": 1060.6, "ate_set": 2412.2, "deliv": 36.0, "ped": 55, "ultima": ""}, {"sup": "Raika Fonseca", "nome": "Santa Inês", "meta": 26100, "venda": 4744.6, "pct": 0.19889, "ate23": 2249.39, "ate_set": 4881.07, "deliv": 0.0, "ped": 94, "ultima": ""}, {"sup": "Raika Fonseca", "nome": "Silviano Brandão", "meta": 19000, "venda": 3894.5, "pct": 0.24272, "ate23": 1817.49, "ate_set": 4146.8, "deliv": 942.0, "ped": 101, "ultima": ""}, {"sup": "Raika Fonseca", "nome": "São Geraldo", "meta": 18100, "venda": 2426.0, "pct": 0.1646, "ate23": 702.35, "ate_set": 2682.76, "deliv": 730.0, "ped": 62, "ultima": ""}, {"sup": "Raika Fonseca", "nome": "Serra (loja nova)", "meta": null, "venda": 2677.8, "pct": null, "ate23": null, "ate_set": null, "deliv": 0.0, "ped": 62, "ultima": ""}, {"sup": "Glaucia Silva", "nome": "Botafogo Praia Shopping", "meta": 9100, "venda": 2005.0, "pct": 0.2648, "ate23": 656.55, "ate_set": 2125.7, "deliv": 0.0, "ped": 48, "ultima": "14:42"}, {"sup": "Glaucia Silva", "nome": "Norte Shopping", "meta": 9000, "venda": 1827.7, "pct": 0.16757, "ate23": 564.32, "ate_set": 1644.05, "deliv": 0.0, "ped": 51, "ultima": "14:41"}, {"sup": "Glaucia Silva", "nome": "Shopping Nova Iguaçu", "meta": 13400, "venda": 1587.3, "pct": 0.23723, "ate23": 1143.55, "ate_set": 2473.39, "deliv": 0.0, "ped": 42, "ultima": "14:24"}, {"sup": "Glaucia Silva", "nome": "Top Shopping (Nova Iguaçu)", "meta": 13400, "venda": 1945.0, "pct": 0.23602, "ate23": 861.64, "ate_set": null, "deliv": 0.0, "ped": 62, "ultima": "14:40"}, {"sup": "Bruna Rocha", "nome": "Angeloni (Itajaí)", "meta": 10800, "venda": 4366.53, "pct": 0.357, "ate23": 2235.98, "ate_set": 3176.25, "deliv": 1778.53, "ped": 102, "ultima": "14:07"}, {"sup": "Bruna Rocha", "nome": "Balneário Barra Sul", "meta": 12000, "venda": 1745.0, "pct": 0.19919, "ate23": 1377.52, "ate_set": 1998.15, "deliv": 135.4, "ped": 42, "ultima": "14:19"}, {"sup": "Bruna Rocha", "nome": "Balneário Shopping", "meta": 15700, "venda": 4332.89, "pct": 0.30168, "ate23": 2314.06, "ate_set": 3325.97, "deliv": 489.49, "ped": 109, "ultima": "14:40"}, {"sup": "Bruna Rocha", "nome": "Bistek (Itajaí)", "meta": 10900, "venda": 5146.4, "pct": 0.40215, "ate23": 2993.41, "ate_set": 3079.55, "deliv": 1487.5, "ped": 101, "ultima": "14:22"}, {"sup": "Bruna Rocha", "nome": "Camboriú", "meta": 13300, "venda": 4574.81, "pct": 0.28105, "ate23": 2490.05, "ate_set": 3695.3, "deliv": 1234.41, "ped": 93, "ultima": "14:37"}, {"sup": "Amanda Araujo", "nome": "Caetés", "meta": 15500, "venda": 4874.9, "pct": 0.31318, "ate23": 1632.32, "ate_set": 4896.85, "deliv": 474.5, "ped": 131, "ultima": ""}, {"sup": "Amanda Araujo", "nome": "Castelo", "meta": 17900, "venda": 5519.1, "pct": 0.31315, "ate23": 2887.84, "ate_set": 5119.82, "deliv": 2235.4, "ped": 121, "ultima": ""}, {"sup": "Amanda Araujo", "nome": "Catalão", "meta": 14700, "venda": 3484.0, "pct": 0.2404, "ate23": 1557.4, "ate_set": 4035.9, "deliv": 1705.5, "ped": 78, "ultima": "14:39"}, {"sup": "Amanda Araujo", "nome": "Funcionários", "meta": 16000, "venda": 3730.2, "pct": 0.3236, "ate23": 2286.12, "ate_set": 4303.5, "deliv": 230.0, "ped": 99, "ultima": "14:39"}, {"sup": "Amanda Araujo", "nome": "Liberdade", "meta": 14800, "venda": 4248.5, "pct": 0.40413, "ate23": 2335.65, "ate_set": 5089.77, "deliv": 542.9, "ped": 118, "ultima": ""}, {"sup": "Amanda Araujo", "nome": "Lourdes", "meta": 12100, "venda": 4565.7, "pct": 0.3411, "ate23": 1210.31, "ate_set": 3755.52, "deliv": 960.5, "ped": 120, "ultima": "14:29"}, {"sup": "Amanda Araujo", "nome": "Minas Centro", "meta": 14100, "venda": 4808.5, "pct": 0.35816, "ate23": 814.87, "ate_set": 4296.3, "deliv": 380.0, "ped": 136, "ultima": "14:39"}, {"sup": "Amanda Araujo", "nome": "Ouro Preto", "meta": 24600, "venda": 4104.0, "pct": 0.28158, "ate23": 1718.52, "ate_set": 6789.87, "deliv": 1184.5, "ped": 105, "ultima": ""}, {"sup": "Amanda Araujo", "nome": "Prado", "meta": 21900, "venda": 7385.55, "pct": 0.31293, "ate23": 2351.01, "ate_set": 6721.05, "deliv": 2529.9, "ped": 189, "ultima": ""}, {"sup": "Amanda Araujo", "nome": "Praça Sete", "meta": 29200, "venda": 11669.5, "pct": 0.38708, "ate23": 4687.94, "ate_set": 10042.79, "deliv": 1113.0, "ped": 282, "ultima": ""}, {"sup": "Amanda Araujo", "nome": "Santa Mônica", "meta": 24500, "venda": 4277.5, "pct": 0.17202, "ate23": 1501.38, "ate_set": 3607.82, "deliv": 876.5, "ped": 95, "ultima": ""}, {"sup": "Amanda Araujo", "nome": "Savassi", "meta": 17000, "venda": 5796.7, "pct": 0.39595, "ate23": 1835.61, "ate_set": 5601.15, "deliv": 1328.0, "ped": 162, "ultima": ""}, {"sup": "Amanda Araujo", "nome": "Shopping Cidade", "meta": 19700, "venda": 5260.94, "pct": 0.37358, "ate23": 3670.43, "ate_set": 6269.37, "deliv": 517.54, "ped": 144, "ultima": ""}, {"sup": "Adriana Costa", "nome": "Jacuí", "meta": 12800, "venda": 4363.1, "pct": 0.29973, "ate23": 1278.9, "ate_set": 3801.85, "deliv": 1398.0, "ped": 99, "ultima": "14:39"}, {"sup": "Adriana Costa", "nome": "Minas Shopping", "meta": 15100, "venda": 3835.8, "pct": 0.34235, "ate23": 787.73, "ate_set": 3768.75, "deliv": 0.0, "ped": 101, "ultima": ""}, {"sup": "Adriana Costa", "nome": "Morro Alto (Vespasiano)", "meta": 16100, "venda": 3394.8, "pct": 0.14074, "ate23": 1168.02, "ate_set": null, "deliv": 1031.0, "ped": 82, "ultima": "14:41"}, {"sup": "Adriana Costa", "nome": "Pedro Leopoldo", "meta": 14400, "venda": 2696.0, "pct": 0.39793, "ate23": 2826.47, "ate_set": 5484.95, "deliv": 0.0, "ped": 58, "ultima": ""}, {"sup": "Adriana Costa", "nome": "Posto Jockey", "meta": 19900, "venda": 3833.05, "pct": 0.18642, "ate23": 1333.99, "ate_set": 3300.75, "deliv": 674.5, "ped": 86, "ultima": "14:33"}, {"sup": "Adriana Costa", "nome": "Serra Verde", "meta": 16700, "venda": 2472.8, "pct": 0.15513, "ate23": 888.67, "ate_set": 2986.5, "deliv": 857.9, "ped": 54, "ultima": "14:33"}, {"sup": "Adriana Costa", "nome": "São Gabriel", "meta": 16400, "venda": 1679.4, "pct": 0.15336, "ate23": 984.32, "ate_set": 2062.5, "deliv": 465.5, "ped": 43, "ultima": ""}];
+const brl = v => v==null ? "—" : "R$ " + Math.round(v).toLocaleString("pt-BR");
+const brlk = v => "R$ " + (v/1000).toLocaleString("pt-BR",{maximumFractionDigits:1,minimumFractionDigits:1}) + " mil";
+const pct = (v,d=0) => v==null ? "—" : (v*100).toLocaleString("pt-BR",{maximumFractionDigits:d,minimumFractionDigits:d}) + "%";
+const sgn = v => v==null ? "—" : (v>=0?"+":"") + pct(v);
+
+LOJAS.forEach(l=>{
+  l.feito = l.meta ? l.venda/l.meta : null;
+  l.proj = l.pct ? l.venda/l.pct : null;
+  l.ratio = l.meta && l.proj ? l.proj/l.meta : null;
+  l.vsSet = l.ate_set ? l.venda/l.ate_set-1 : null;
+  l.vs23 = l.ate23 ? l.venda/l.ate23-1 : null;
+  l.st = l.ratio==null ? "na" : l.ratio>=1 ? "ok" : l.ratio>=.85 ? "warn" : "bad";
+});
+const COM = LOJAS.filter(l=>l.meta);
+function agg(arr){
+  const venda=arr.reduce((s,l)=>s+l.venda,0), meta=arr.reduce((s,l)=>s+l.meta,0);
+  const esp=arr.reduce((s,l)=>s+l.meta*l.pct,0), proj=arr.reduce((s,l)=>s+l.proj,0);
+  const a=arr.filter(l=>l.ate_set), b=arr.filter(l=>l.ate23);
+  return {venda,meta,feito:venda/meta,esp:esp/meta,proj,ratio:proj/meta,
+    ok:arr.filter(l=>l.st==="ok").length,n:arr.length,
+    vsSet:a.reduce((s,l)=>s+l.venda,0)/a.reduce((s,l)=>s+l.ate_set,0)-1,
+    vs23:b.reduce((s,l)=>s+l.venda,0)/b.reduce((s,l)=>s+l.ate23,0)-1};
+}
+const G=agg(COM);
+document.getElementById("hTot").innerHTML = brlk(G.venda);
+document.getElementById("hMeta").textContent = "de " + brl(G.meta) + " de meta";
+document.getElementById("hFill").style.width = Math.min(100,G.feito*100)+"%";
+document.getElementById("hMark").style.left = (G.esp*100)+"%";
+document.getElementById("hFeito").textContent = pct(G.feito,1)+" da meta feito";
+document.getElementById("hEsp").textContent = "traço: "+pct(G.esp,1)+" esperado neste horário";
+document.getElementById("fProj").textContent = brlk(G.proj)+" · "+pct(G.ratio);
+document.getElementById("fRitmo").textContent = G.ok+" de "+G.n;
+document.getElementById("fSet").textContent = sgn(G.vsSet);
+document.getElementById("fSex").textContent = sgn(G.vs23);
+document.getElementById("hRead").textContent =
+  `O grupo vende ${sgn(G.vsSet)} acima do último dia 30 no mesmo horário, mas a meta pede mais: no ritmo de agora o dia fecha perto de ${brlk(G.proj)}, ${pct(1-G.ratio)} abaixo dos ${brlk(G.meta)}. Para chegar lá, a tarde e a noite precisam render cerca de ${brlk(G.meta-G.venda)}.`;
+
+const SUPS=[...new Set(LOJAS.map(l=>l.sup))];
+let fSup=null, fSt=null, sortK="ratio", sortDir="desc";
+const supBox=document.getElementById("sups");
+SUPS.map(s=>({s,a:agg(COM.filter(l=>l.sup===s))})).sort((x,y)=>y.a.ratio-x.a.ratio).forEach(({s,a})=>{
+  const b=document.createElement("button"); b.className="sup"; b.setAttribute("aria-pressed","false");
+  const st=a.ratio>=1?"ok":a.ratio>=.85?"warn":"bad";
+  b.innerHTML=`<div class="top"><span class="name">${s}</span><span class="pctv num">${pct(a.feito)}</span></div>
+  <div class="bar"><div class="fill ${st}" style="width:${Math.min(100,a.feito*100)}%"></div><div class="mark" style="left:${a.esp*100}%"></div></div>
+  <div class="row num"><span>${brl(a.venda)} de ${brl(a.meta)}</span><span>${a.ok}/${a.n} no ritmo</span></div>
+  <div class="row num"><span>Projeção ${brlk(a.proj)}</span><span class="pill ${st}">${pct(a.ratio)} da meta</span></div>`;
+  b.onclick=()=>{document.querySelector(".tablebox").scrollIntoView({behavior:"smooth",block:"start"});fSup = fSup===s?null:s; document.querySelectorAll(".sup").forEach(x=>x.setAttribute("aria-pressed", x===b && fSup? "true":"false")); render();};
+  supBox.appendChild(b);
+});
+const chips=document.getElementById("stChips");
+[["Todas",null],["Abaixo","bad"],["Perto","warn"],["No ritmo","ok"]].forEach(([t,v])=>{
+  const c=document.createElement("button"); c.className="chip"; c.textContent=t; c.setAttribute("aria-pressed", v===null?"true":"false");
+  c.onclick=()=>{fSt=v; chips.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed",x===c?"true":"false")); render();};
+  chips.appendChild(c);
+});
+document.querySelectorAll("th button").forEach(b=>b.onclick=()=>{
+  const k=b.dataset.k; sortDir = sortK===k ? (sortDir==="asc"?"desc":"asc") : (k==="nome"?"asc":"desc"); sortK=k;
+  document.querySelectorAll("th button").forEach(x=>x.removeAttribute("data-dir")); b.dataset.dir=sortDir; render();
+});
+const LBL={ok:"No ritmo",warn:"Perto",bad:"Abaixo",na:"Sem meta"};
+function render(){
+  let rows=LOJAS.filter(l=>(!fSup||l.sup===fSup)&&(!fSt||l.st===fSt));
+  rows.sort((a,b)=>{let x=a[sortK],y=b[sortK]; if(x==null)return 1; if(y==null)return -1;
+    const r = typeof x==="string"? x.localeCompare(y,"pt") : x-y; return sortDir==="asc"?r:-r;});
+  let last=null;
+  const GRP={ok:"No ritmo da meta",warn:"Perto da meta (85% a 99%)",bad:"Abaixo do ritmo (menos de 85%)",na:"Sem meta"};
+  document.getElementById("tb").innerHTML=rows.map(l=>{let h=""; if(sortK==="ratio"&&l.st!==last){last=l.st;h=`<tr class="grp"><td colspan="8"><span class="pill ${l.st}">${GRP[l.st]}</span> <span class="num" style="color:var(--muted);font-size:13px">${rows.filter(r=>r.st===l.st).length} lojas</span></td></tr>`;} return h+`<tr>
+    <td><span class="loja">${l.nome}</span><span class="sp">${l.sup}</span></td>
+    <td class="num">${brl(l.venda)}</td>
+    <td class="num">${brl(l.meta)}</td>
+    <td class="progress">${l.meta?`<div class="pbar"><div class="bar"><div class="fill ${l.st}" style="width:${Math.min(100,l.feito*100)}%"></div><div class="mark" style="left:${l.pct*100}%" title="esperado ${pct(l.pct)}"></div></div><span class="num">${pct(l.feito)}</span></div>`:"—"}</td>
+    <td class="num">${l.meta?brl(l.proj):"—"}</td>
+    <td><span class="pill ${l.st}">${LBL[l.st]}${l.ratio?" · "+pct(l.ratio):""}</span></td>
+    <td class="num ${l.vsSet==null?"":l.vsSet>=0?"up":"down"}">${sgn(l.vsSet)}</td>
+    <td class="num">${l.deliv? brl(l.deliv): '<span class="down">R$ 0</span>'}</td></tr>`;}).join("");
+}
+render();
+</script>
+</html>
