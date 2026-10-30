@@ -156,7 +156,7 @@ td.progress{width:200px}
     <div><b>Status:</b> no ritmo = projeção ≥ meta; perto = 85% a 99%; abaixo = menos de 85%.</div>
     <div><b>vs 30/09 e vs 23/10:</b> venda até o mesmo horário naqueles dias.</div>
     <div><b>Catalão</b> do PDF da Amanda foi lido como a loja Caiçaras do Atlas. <b>Serra</b> não tem meta e fica fora dos totais. <b>Top Shopping</b> usa a curva da sexta 23/10, porque não tem dia 30 anterior.</div>
-    <div><b>Delivery R$ 0</b> até agora em 12 lojas: vale confirmar se o iFood e o 99 estão abertos nelas.</div>
+    <div><b>Delivery R$ 0 · ver integração:</b> 12 lojas estão sem nenhuma venda de iFood ou 99 até agora. Pode ser problema de integração dos apps com o caixa (os pedidos não chegam na SWFast nem no Atlas) ou o app fechado. Vale checar com cada loja.</div>
     <div>A apuração oficial segue a regra do PDF: da abertura de sexta até as 5h de sábado. Este é um parcial.</div>
   </section>
 </div>
@@ -238,7 +238,7 @@ function render(){
     <td class="num">${l.meta?brl(l.proj):"—"}</td>
     <td><span class="pill ${l.st}">${LBL[l.st]}${l.ratio?" · "+pct(l.ratio):""}</span></td>
     <td class="num ${l.vsSet==null?"":l.vsSet>=0?"up":"down"}">${sgn(l.vsSet)}</td>
-    <td class="num">${l.deliv? brl(l.deliv): '<span class="down">R$ 0</span>'}</td></tr>`;}).join("");
+    <td class="num">${l.deliv? brl(l.deliv): '<span class="pill bad" title="Nenhuma venda de delivery até agora. Pode ser falha na integração do iFood ou do 99 com o caixa.">R$ 0 · ver integração</span>'}</td></tr>`;}).join("");
 }
 render();
 </script>
